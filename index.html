@@ -12,31 +12,33 @@
 <body>
   <h2>Expense tracker</h2>
   <p>Your expense</p>
-  <p class="moneyAmount">$<span>0.00</span></p>
+  <p class="moneyAmount" id="moneyAmount">$0.00</span></p>
   <div class="inc-exp-container">
     <div class="inc">
       <h3>Income</h3>
-      <p class="incAmount" id="incAmount">$<span>0.00</span></p>
+      <p class="money plus" id="money-plus">+$0.00</p>
     </div>
     <div class="exp">
       <h3>Expense</h3>
-      <p class="expAmount" id="expAmount">$<span>0.00</span></p>
+      <p class="money minus" id="money-minus">-$0.00</span></p>
     </div>
   </div>
-  <div class="history" id="history">
-    <h3>History</h3>
-    <ul class="list" id="list">
-    </ul>
-  </div>
-  <div class="new-transaction">
-    <h3>Add new transaction</h3>
-    <label for="transaction">Text</label>
-    <input type="text" name="transaction" id="transaction-text" placeholder="Enter text...">
+  <form action="#" id="form">
+    <div class="history" id="history">
+      <h3>History</h3>
+      <ul class="list" id="list">
+      </ul>
+    </div>
+    <div class="new-transaction">
+      <h3>Add new transaction</h3>
+      <label for="transaction">Text</label>
+      <input type="text" name="transaction" id="transaction-text" placeholder="Enter text...">
 
-    <label for="amount">Amount <br> (negative - expense, positive - income)</label>
-    <input type="number" name="amount" id="transaction-amount" placeholder="Enter amount...">
-    <button class="add-transaction" id="add-transaction">Add transaction</button>
-  </div>
+      <label for="amount">Amount <br> (negative - expense, positive - income)</label>
+      <input type="number" name="amount" id="transaction-amount" placeholder="Enter amount...">
+      <button class="add-transaction">Add transaction</button>
+    </div>
+  </form>
   <script src="script.js"></script>
 </body>
 

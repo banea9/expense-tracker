@@ -1,43 +1,98 @@
-const addBtn = document.getElementById("add-transaction");
-const transactionAmount = document.getElementById("transaction-amount");
-const transactionText = document.getElementById("transaction-text");
+const amount = document.getElementById("transaction-amount");
+const text = document.getElementById("transaction-text");
 const list = document.getElementById("list");
-function addTransaction(text, amount) {
-  validateInput(text, amount);
-  createDOMElement(text, amount, list);
-}
+const balance = document.getElementById("moneyAmount");
+const money_plus = document.getElementById("money-plus");
+const money_minus = document.getElementById("money-minus");
+const form = document.getElementById("form");
 
-function validateInput(text, amount) {
-  if (!text.value.trim() || !amount.value) {
-    alert("Please populate both: transaction text and transaction amount");
+let localStorageTransactions = JSON.parse(localStorage.getItem("transactions"));
+let transactions =
+  localStorage.getItem("transactions") !== null ? localStorageTransactions : [];
+
+// add transaction
+function addTransaction(e) {
+  e.preventDefault();
+  if (text.value.trim() === "" || amount.value.trim() === "") {
+    alert("Please add text and value");
+  } else {
+    const transaction = {
+      id: generateID(),
+      text: text.value,
+      amount: +amount.value
+    };
+    transactions.push(transaction);
+
+    addTransactionDOM(transaction);
+    updateValues();
+    updateLocalStorage();
+    text.value = "";
+    amount.value = "";
   }
 }
 
-function createDOMElement(text, amount, parentEl) {
-  const li = document.createElement("li");
-  if (amount.value[0] === "-") {
-    li.innerHTML = `${text.value} <span>${amount.value}</span>`;
-    li.style.borderRight = '4px solid #e42424'
-  }
-  else {
-    li.innerHTML = `${text.value} <span>+${amount.value}</span>`;
-    li.style.borderRight = '4px solid #279d21'
-  }
-  const btn = document.createElement("button");
-  btn.textContent = "X";
-  btn.id = "del-btn";
-  btn.classList.add("del-btn");
-  btn.addEventListener('click', deleteDOMElement)
-  li.appendChild(btn);
-  parentEl.appendChild(li);
+//generateID
+function generateID() {
+  return Math.floor(Math.random() * 1000000);
+}
+// Add transactions to DOM list
+function addTransactionDOM(transaction) {
+  // Get sign
+  const sign = transaction.amount < 0 ? "-" : "+";
+
+  const item = document.createElement("li");
+
+  // Add class based on value
+  item.classList.add(transaction.amount < 0 ? "minus" : "plus");
+
+  item.innerHTML = `
+      ${transaction.text} <span>${sign}${Math.abs(
+    transaction.amount
+  )}</span> <button class="del-btn" onclick="removeTransaction(${
+    transaction.id
+  })">x</button>
+    `;
+
+  list.appendChild(item);
 }
 
-function deleteDOMElement() {
-    event.target.parentElement.remove()
+//update the balance income and expense
+function updateValues() {
+  const amounts = transactions.map(el => el.amount);
+  const totalBalance = amounts.reduce((a, b) => a + b, 0).toFixed(2);
+  const income = amounts
+    .filter(x => x > 0)
+    .reduce((a, b) => a + b, 0)
+    .toFixed(2);
+  const expense = (
+    amounts.filter(x => x < 0).reduce((a, b) => a + b, 0) * -1
+  ).toFixed(2);
+
+  balance.innerText = `$${totalBalance}`;
+  money_plus.innerText = `$${income}`;
+  money_minus.innerText = `$${expense}`;
 }
 
-addBtn.addEventListener("click", () =>
-  addTransaction(transactionText, transactionAmount)
-);
+//remove transactions
 
-// create income func or expense func   
+function removeTransaction(id) {
+  transactions = transactions.filter(el => el.id !== id);
+  updateLocalStorage();
+  init();
+}
+
+function updateLocalStorage() {
+  localStorage.setItem("transactions", JSON.stringify(transactions));
+}
+
+// Init app
+function init() {
+  list.innerHTML = "";
+  transactions.forEach(addTransactionDOM);
+  updateValues();
+}
+
+init();
+
+form.addEventListener("submit", addTransaction);
+
